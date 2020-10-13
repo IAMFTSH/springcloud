@@ -1,0 +1,48 @@
+server:
+  port: 8001
+spring:
+  application:
+    #这个名字关系到注册到注册服务器后的名字
+    name: payment-service
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/springcloud?useSSL=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    #****************************   按实际情况作出改动   Linux和mac要useSSL=true  window不用吧
+    #url: jdbc:mysql://localhost:3306/activiti?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource   #使用阿里数据池，需要导包，如果不导请删掉
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted  #全局逻辑删除字段值 3.3.0开始支持，详情看下面。
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+      # 全局逻辑删除: begin 3.3.0
+      # 如果公司代码比较规范，比如统一了全局都是flag为逻辑删除字段。
+      #使用此配置则不需要在实体类上添加 @TableLogic。
+      #但如果实体类上有 @TableLogic 则以实体上的为准，忽略全局。 即先查找注解再查找全局，都没有则此表没有逻辑删除。
+  mapper-locations: classpath*:/learn/spring/cloud/mapper/xml/*.xml             #***********Mapper.xml包路径*****************   按实际情况作出改动
+  type-aliases-package: learn.spring.cloud.pojo      #***********实体类包路径*****************   按实际情况作出改动
+
+eureka:
+  client:
+    #false表示不用去注册中心注册自己
+    register-with-eureka: true
+    #false表示自己就是注册中心，我的职责是维护服务实例，并不需要去检索服务
+    fetch-registry: true
+    service-url:
+      #设置与EUREKA Server 交互的地址，查询服务和注册服务都需要依赖这个地址
+      defaultZone:
+        http://eureka7001.com:7001/eureka/,http://eureka7002.com:7002/eureka/
+  instance:
+    instance-id: payment-8001
+    #鼠标移动显示IP地址，在浏览器左下角
+    prefer-ip-address: true
+    #f发送给服务端心跳间隔
+    lease-renewal-interval-in-seconds: 1
+    #服务端等待时间最长时间
+    lease-expiration-duration-in-seconds: 2
